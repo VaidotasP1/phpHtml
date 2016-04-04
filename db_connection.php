@@ -6,6 +6,6 @@ if (!$connection)
 {
 die('Neprisijungta : ' . mysqli_connect_error());
 }
-
+mysqli_set_charset($connection,"utf8");
 
 ?>
