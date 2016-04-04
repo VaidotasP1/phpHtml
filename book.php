@@ -1,6 +1,10 @@
 <?php
 include 'db_connection.php';
-$bookId=(isset($_GET['bookId']) &&!empty(isset($_GET['bookId'])))?(integer)$_GET['bookId']:NULL;
+$bookId = null;
+
+if (isset($_GET['bookId']) && $_GET['bookId'] !== false) {
+    $bookId = (integer) $_GET['bookId'];
+}
 $sql="SELECT `Books`.`bookId`,`Books`.`title`,`BooksGenres`.`genre`,`Books`.`year`, GROUP_CONCAT(`Authors`.`name`) AS `bookAuthors` "
     ." FROM `Books` "
     ."JOIN `BooksMap` ON `BooksMap`.`bookId`=`Books`.`bookId` "
