@@ -6,13 +6,12 @@
  * Date: 16.4.5
  * Time: 17.22
  */
-class Book
+class Book implements IteratorAggregate
 {
     const SQL_HOST='localhost';
     const SQL_DB='Books';
     const SQL_USER='root';
     const SQL_PASSWORD='root';
-
     protected $title=NULL;
     protected $year=NULL;
     protected $genre=NULL;
@@ -128,7 +127,7 @@ class Book
     }
     public function getAllBooks(){
         $connection = mysqli_connect(self::SQL_HOST,self::SQL_USER,self::SQL_PASSWORD,self::SQL_DB);
-
+        $list=NULL;
         if (!$connection)
         {
             die('Neprisijungta : ' . mysqli_connect_error());
@@ -142,14 +141,19 @@ class Book
             ."GROUP BY `BooksMap`.`bookId`";
         if($r=mysqli_query($connection,$sql)){
             while ($books=mysqli_fetch_object($r)) {
-
                 $this->setAuthor($books->bookAuthors);
                 $this->setTitle($books->title);
                 $this->setYear($books->year);
                 $this->setBookId($books->bookId);
                 $this->setGenre($books->genre);
+                $list[]=$this->getIterator();
             }
         }
+        return  $list;
+    }
+
+    public function getIterator() {
+        return new ArrayIterator($this);
     }
 
 }

@@ -3,7 +3,7 @@ include 'Book.php';
 $i=1;
 $books = new Book();
 $bookList=$books->getAllBooks();
-
+print_r($bookList);
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/html">
@@ -22,8 +22,9 @@ $bookList=$books->getAllBooks();
         <th>Year</th>
     </tr>
     <?php
-        foreach ($bookList as $book)
+        foreach ($bookList as $key=> $book)
         {
+            var_dump($key, $book);
             /* @var Book $book*/
             ?>
             <tr>
