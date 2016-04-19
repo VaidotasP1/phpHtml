@@ -1,0 +1,77 @@
+SELECT SQL_NO_CACHE `Services`.`name`, COUNT(`JobsRegister`.`jobsRegisterId`) AS `jobCount`,`JobsRegister`.`kkTechnicianId`
+FROM `Services` 
+LEFT JOIN `JobsRegister_Services` ON `JobsRegister_Services`.`serviceId`=`Services`.`serviceId`
+LEFT JOIN `JobsRegister` ON `JobsRegister`.`jobsRegisterId`= `JobsRegister_Services`.`jobsRegisterId`
+WHERE  `JobsRegister`.`kkTechnicianArrivalDate` BETWEEN '2007-01-01 00:00:00' AND '2015-01-01 00:00:00'
+GROUP BY `Services`.`serviceId`
+ORDER BY `JobsRegister`.`kkTechnicianId` ASC,`jobCount` DESC, `Services`.`name` ASC;
+
+SELECT SQL_NO_CACHE `Services`.`serviceId`,`Services`.`name`,`JobsRegister_Services`.`jobsRegisterServiceId`
+,GROUP_CONCAT(`JobsRegister_Materials`.`materialId`), SUM(`Materials`.`price`)
+FROM `Services` 
+LEFT JOIN `JobsRegister_Services` ON `JobsRegister_Services`.`serviceId`=`Services`.`serviceId`
+LEFT JOIN `JobsRegister_Materials` ON `JobsRegister_Materials`.`jobsRegisterServiceId`=`JobsRegister_Services`.`jobsRegisterServiceId`
+LEFT JOIN `Materials` ON `Materials`.`materialId`=`JobsRegister_Materials`.`materialId` 
+WHERE `Services`.`serviceId`=2 AND `JobsRegister_Services`.`jobsRegisterServiceId` BETWEEN 1 AND 10000
+GROUP BY `JobsRegister_Materials`.`jobsRegisterServiceId`;
+
+SELECT SQL_NO_CACHE GROUP_CONCAT(`Materials`.`name`), 
+SUM(`Materials`.`price`),
+`JobsRegister`.`kkTechnicianId`
+FROM `Materials`
+JOIN  `JobsRegister_Materials` ON `JobsRegister_Materials`.`materialId`=`Materials`.`materialId`
+JOIN `JobsRegister` ON `JobsRegister`.`jobsRegisterId`=`JobsRegister_Materials`.`jobsRegisterId`
+GROUP BY `JobsRegister`.`kkTechnicianId`
+ORDER BY `JobsRegister`.`kkTechnicianId` ASC;
+
+ALTER TABLE `JobsRegister_Services` ADD INDEX `serviceId` (`serviceId`);
+
+ALTER TABLE `JobsRegister_Services` ADD INDEX `jobsRegisterId` (`jobsRegisterId`);
+
+ALTER TABLE `JobsRegister_Materials` ADD INDEX `materialId` (`materialId`);
+
+ALTER TABLE `JobsRegister_Materials` ADD INDEX `jobsRegisterServiceId` (`jobsRegisterServiceId`);
+
+ALTER TABLE `JobsRegister_Materials` ADD INDEX `jobsRegisterId` (`jobsRegisterId`);
+
+
+UPDATE 
+
+
+http://stackoverflow.com/questions/2009927/aggregate-function-in-an-sql-update-query
+
+
+UPDATE `materialsPrice` 
+LEFT JOIN (SELECT `Materials`.`materialId` AS `materialId`,
+SUM(`Materials`.`price`) AS `totalPrice` FROM `Materials` LEFT JOIN `JobsRegister_Materials`
+ON `JobsRegister_Materials`.`materialId` = `Materials`.`materialId`
+GROUP BY `JobsRegister_Materials`.`materialId`) as `x`
+on `x`.`materialId` = `materialsPrice`.`materialId`
+set `materialsPrice`.`materialsPrice` = `x`.`totalPrice`;
+
+UPDATE `materialsPrice` 
+LEFT JOIN (SELECT `JobsRegister_Materials`.`materialId` AS `materialId`,
+SUM(`JobsRegister_Materials`.`count`) AS `totalCount` FROM `JobsRegister_Materials`
+GROUP BY `JobsRegister_Materials`.`materialId`) as `x`
+on `x`.`materialId` = `materialsPrice`.`materialId`
+set `materialsPrice`.`materialCount` = `x`.`totalCount`;
+
+
+DELETAI
+
+
+DELETE `JobsRegister_Materials` FROM `JobsRegister_Materials`
+LEFT JOIN (SELECT  `JobsRegister_Materials`.`materialId` AS `materialId`  FROM `JobsRegister_Materials`
+GROUP BY `JobsRegister_Materials`.`materialId`
+HAVING SUM(count)<500) AS `x` ON `x`.`materialId` = `Materials`.`materialId`
+WHERE `Materials`.`materialId`=`x`.`materialId`;
+
+
+
+DELETE `JobsRegister_Materials` FROM `JobsRegister_Materials`
+LEFT JOIN (SELECT `JobsRegister`.`jobsRegisterId` AS `jobsRegisterId`,`JobsRegister`.`kkTechnicianId` AS `kkTechnicianId`
+FROM `JobsRegister`
+) AS `z` ON `z`.`jobsRegisterId` = `JobsRegister_Materials`.`jobsRegisterId`
+WHERE `z`.`kkTechnicianId`=66;
+
+
